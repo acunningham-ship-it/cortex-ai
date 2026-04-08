@@ -25,6 +25,7 @@ class Config:
     claude_api_key: Optional[str] = None
     openai_api_key: Optional[str] = None
     cloud_models: list[CloudModel] = field(default_factory=list)
+    tools: Optional[dict] = None
 
     def __post_init__(self):
         """Validate configuration."""
@@ -81,6 +82,10 @@ def load_config() -> Config:
                 provider=model_dict["provider"]
             ))
     config_dict["cloud_models"] = cloud_models
+
+    # Keep tools config as-is if present
+    if "tools" not in config_dict:
+        config_dict["tools"] = None
 
     return Config(**config_dict)
 

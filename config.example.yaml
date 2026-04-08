@@ -17,3 +17,12 @@ cloud_models: []
   # - id: gpt-4o-mini
   #   name: GPT-4o Mini
   #   provider: openai
+
+# CLI tool integrations (optional)
+tools:
+  enabled: true
+  custom: []
+    # - id: my_tool
+    #   name: My AI Tool
+    #   command: my-tool --format json
+    #   description: My custom AI tool

@@ -102,6 +102,19 @@ class UsageStat(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class ToolRun(Base):
+    """Represents a CLI tool execution."""
+    __tablename__ = "tool_runs"
+
+    id = Column(String, primary_key=True)
+    tool_id = Column(String)
+    input_text = Column(Text)
+    output_text = Column(Text)
+    exit_code = Column(Integer)
+    latency_ms = Column(Float)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Database:
     """Database management."""
 

@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from config import get_config
 from database import init_database, close_database, get_db
 from providers.ollama import OllamaProvider
-from routers import chat, models, templates, pipelines, history, conversations
+from routers import chat, models, templates, pipelines, history, conversations, tools
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -48,6 +48,7 @@ app.include_router(conversations.router)
 app.include_router(templates.router)
 app.include_router(pipelines.router)
 app.include_router(history.router)
+app.include_router(tools.router)
 
 
 # Global state
