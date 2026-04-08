@@ -1,5 +1,6 @@
 """Conversations router — CRUD for conversation history."""
 
+import uuid
 from datetime import datetime
 
 from fastapi import APIRouter, HTTPException
@@ -24,6 +25,32 @@ class ConversationInfo(BaseModel):
 
 class ConversationDetail(ConversationInfo):
     messages: list[dict]
+
+
+class CreateConversationRequest(BaseModel):
+    title: str = "New Chat"
+
+
+@router.post("")
+async def create_conversation(request: CreateConversationRequest) -> ConversationInfo:
+    db = get_db()
+    conv = Conversation(
+        id=str(uuid.uuid4()),
+        title=request.title,
+        model="",
+        provider="",
+    )
+    async with db.get_session() as session:
+        session.add(conv)
+    return ConversationInfo(
+        id=conv.id,
+        title=conv.title,
+        model=conv.model,
+        provider=conv.provider,
+        created_at=conv.created_at,
+        updated_at=conv.updated_at,
+        message_count=0,
+    )
 
 
 @router.get("")
