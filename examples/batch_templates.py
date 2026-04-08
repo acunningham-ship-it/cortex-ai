@@ -42,9 +42,7 @@ def main():
         payload = {
             "model": "qwen2.5:0.5b",
             "template_id": template_id,
-            "messages": [
-                {"role": "user", "content": "Generate a brief example"}
-            ]
+            "message": "Generate a brief example"
         }
 
         response = client.post("/api/chat", json=payload, timeout=30.0)

@@ -15,17 +15,14 @@ def main():
 
     payload = {
         "model": "qwen2.5:0.5b",
-        "messages": [
-            {"role": "user", "content": "Explain quantum computing in simple terms."}
-        ],
-        "stream": True,
+        "message": "Explain quantum computing in simple terms."
     }
 
     print("\nStreaming response from qwen2.5:0.5b:")
     print("-" * 50)
 
     try:
-        with client.stream("POST", "/api/chat", json=payload, timeout=60.0) as response:
+        with client.stream("POST", "/api/chat/stream", json=payload, timeout=60.0) as response:
             if response.status_code == 200:
                 # Handle streaming response
                 for line in response.iter_lines():

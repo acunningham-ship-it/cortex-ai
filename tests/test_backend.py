@@ -61,9 +61,7 @@ class TestChat:
         """POST /api/chat should work with qwen2.5:0.5b."""
         payload = {
             "model": "qwen2.5:0.5b",
-            "messages": [
-                {"role": "user", "content": "Hello, who are you?"}
-            ]
+            "message": "Hello, who are you?"
         }
         response = client.post(
             "/api/chat",

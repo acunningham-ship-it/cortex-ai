@@ -26,9 +26,7 @@ def main():
     print("\n2. Sending a chat message...")
     payload = {
         "model": "qwen2.5:0.5b",
-        "messages": [
-            {"role": "user", "content": "What is the capital of France?"}
-        ]
+        "message": "What is the capital of France?"
     }
     response = client.post("/api/chat", json=payload, timeout=30.0)
     print(f"Status: {response.status_code}")
