@@ -299,8 +299,8 @@ pytest tests/ -v
 | Provider | Config Key | Notes |
 |----------|-----------|-------|
 | Ollama | `ollama_url` | Local, free, zero config |
-| Anthropic Claude | `claude_api_key` | Claude 3.5, Haiku, etc. |
-| OpenAI | `openai_api_key` | GPT-4o, GPT-4, etc. |
+| Anthropic Claude | `claude_api_key` | Claude Opus 4.6, Sonnet 4.6, Haiku 4.5 |
+| OpenAI | `openai_api_key` | GPT-5, GPT-4.1, o3, o4-mini |
 | Any OpenAI-compat | custom `base_url` | Works with LM Studio, etc. |
 
 ---

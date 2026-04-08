@@ -29,7 +29,7 @@ cloud_models: []
   #   name: GPT-4.1
   #   provider: openai
   # - id: gpt-4o
-  #   name: GPT-4o
+  #   name: GPT-5
   #   provider: openai
   # - id: o3
   #   name: o3 (reasoning)
