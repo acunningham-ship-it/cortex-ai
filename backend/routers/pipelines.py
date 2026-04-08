@@ -70,14 +70,14 @@ BUILTIN_PIPELINES = [
         "steps": [
             {
                 "name": "Summarize",
-                "model": "llama2",
+                "model": "qwen2.5:0.5b",
                 "provider": "ollama",
                 "system_prompt": None,
                 "input_template": "Summarize this in 3 bullet points:\n\n{{input}}"
             },
             {
                 "name": "Translate to Spanish",
-                "model": "llama2",
+                "model": "qwen2.5:0.5b",
                 "provider": "ollama",
                 "system_prompt": None,
                 "input_template": "Translate the following to Spanish:\n\n{{step_0_output}}"
@@ -90,14 +90,14 @@ BUILTIN_PIPELINES = [
         "steps": [
             {
                 "name": "Code Review",
-                "model": "llama2",
+                "model": "qwen2.5:0.5b",
                 "provider": "ollama",
                 "system_prompt": None,
                 "input_template": "Review this code for bugs, performance, and style:\n\n{{input}}"
             },
             {
                 "name": "Write Tests",
-                "model": "llama2",
+                "model": "qwen2.5:0.5b",
                 "provider": "ollama",
                 "system_prompt": None,
                 "input_template": "Write comprehensive unit tests for this code:\n\n{{input}}"
@@ -181,7 +181,7 @@ async def create_pipeline(request: PipelineRequest) -> PipelineInfo:
     )
 
     # Store steps
-    steps_data = [step.dict() for step in request.steps]
+    steps_data = [step.model_dump() for step in request.steps]
     pipeline.set_steps(steps_data)
 
     async with db.get_session() as session:

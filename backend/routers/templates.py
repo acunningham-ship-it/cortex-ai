@@ -218,7 +218,7 @@ async def delete_template(template_id: str) -> dict:
 @router.post("/{template_id}/run")
 async def run_template(template_id: str, request: TemplateRunRequest) -> dict:
     """Run a template by substituting variables and calling chat."""
-    from routers.chat import chat, ChatRequest
+    from routers.chat import chat_endpoint, ChatRequest
 
     db = get_db()
 
@@ -239,10 +239,10 @@ async def run_template(template_id: str, request: TemplateRunRequest) -> dict:
             message=prompt,
         )
 
-        response = await chat(chat_request)
+        response = await chat_endpoint(chat_request)
 
         return {
             "template_id": template_id,
             "prompt_used": prompt,
-            "response": response.dict(),
+            "response": response.model_dump(),
         }
