@@ -30,8 +30,8 @@ db_path: "~/.cortex/cortex.db"        # Database location
 
 # Optional: Add cloud models to model list
 cloud_models:
-  - id: claude-3-haiku-20240307
-    name: Claude 3 Haiku
+  - id: claude-haiku-4-5-20251001
+    name: Claude Haiku 4.5
     provider: anthropic
 ```
 
@@ -158,7 +158,7 @@ curl http://localhost:7337/api/models
 curl -X POST http://localhost:7337/api/chat \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "llama2",
+    "model": "qwen2.5:7b",
     "provider": "ollama",
     "message": "Hello, how are you?"
   }'
@@ -167,7 +167,7 @@ curl -X POST http://localhost:7337/api/chat \
 curl -X POST http://localhost:7337/api/chat/stream \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "llama2",
+    "model": "qwen2.5:7b",
     "provider": "ollama",
     "message": "Explain quantum computing"
   }'
@@ -188,7 +188,7 @@ curl -X POST http://localhost:7337/api/chat/stream \
 
 **Missing models**
 - List Ollama models: `ollama list`
-- Pull a model: `ollama pull llama2`
+- Pull a model: `ollama pull qwen2.5:7b`
 
 **API Key errors**
 - Verify key format (should start with `sk-`)

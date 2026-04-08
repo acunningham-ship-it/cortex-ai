@@ -52,7 +52,7 @@ curl http://localhost:7337/api/models
 curl -X POST http://localhost:7337/api/chat \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "llama2",
+    "model": "qwen2.5:7b",
     "provider": "ollama",
     "message": "What is 2+2?"
   }'
@@ -129,7 +129,7 @@ curl -X POST http://localhost:7337/api/chat \
 - Or configure OpenAI API key in cortex.yaml
 
 **"No models available"**
-- Run: `ollama pull llama2`
+- Run: `ollama pull qwen2.5:7b`
 - Or configure cloud API keys
 
 **Database errors**

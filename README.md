@@ -126,8 +126,8 @@ db_path: "~/.cortex/cortex.db"
 
 # Optional: add cloud models to the selector
 cloud_models:
-  - id: claude-3-haiku-20240307
-    name: Claude 3 Haiku
+  - id: claude-haiku-4-5-20251001
+    name: Claude Haiku 4.5
     provider: anthropic
 ```
 
