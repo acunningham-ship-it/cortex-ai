@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from fastapi import APIRouter
 from pydantic import BaseModel
+from sqlalchemy import select
 
 from database import get_db, UsageStat
 
@@ -47,8 +48,6 @@ async def get_usage() -> UsageResponse:
     db = get_db()
 
     async with db.get_session() as session:
-        from sqlalchemy import select, func
-
         result = await session.execute(select(UsageStat))
         stats = result.scalars().all()
 

@@ -50,11 +50,22 @@ export interface PipelineStep {
   inputTemplate: string
 }
 
+export interface ModelUsage {
+  model: string
+  provider: string
+  total_tokens_in: number
+  total_tokens_out: number
+  request_count: number
+  avg_latency_ms: number
+  estimated_cost_usd: number
+}
+
 export interface Usage {
   totalRequests: number
   totalTokens: number
   modelsUsed: string[]
   uptime: number
+  models: ModelUsage[]
 }
 
 const API_BASE = '/api'
@@ -280,9 +291,17 @@ export async function runPipeline(
   return results
 }
 
-// Usage
+// Usage — transforms backend {models:[...]} into flat Usage shape
 export async function getUsage(): Promise<Usage> {
   const response = await fetch(`${API_BASE}/usage`)
   if (!response.ok) throw new Error('Failed to fetch usage')
-  return response.json()
+  const data = await response.json()
+
+  // Backend returns {models: [...ModelUsage]}
+  const models: ModelUsage[] = data.models ?? []
+  const totalRequests = models.reduce((sum, m) => sum + m.request_count, 0)
+  const totalTokens = models.reduce((sum, m) => sum + m.total_tokens_in + m.total_tokens_out, 0)
+  const modelsUsed = [...new Set(models.map(m => m.model))]
+
+  return { totalRequests, totalTokens, modelsUsed, uptime: 0, models }
 }
