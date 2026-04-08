@@ -5,6 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from database import get_db, Conversation, Message
 
@@ -30,7 +31,9 @@ async def list_conversations() -> list[ConversationInfo]:
     db = get_db()
     async with db.get_session() as session:
         result = await session.execute(
-            select(Conversation).order_by(Conversation.updated_at.desc())
+            select(Conversation)
+            .options(selectinload(Conversation.messages))
+            .order_by(Conversation.updated_at.desc())
         )
         conversations = result.scalars().all()
         return [
@@ -51,7 +54,12 @@ async def list_conversations() -> list[ConversationInfo]:
 async def get_conversation(conversation_id: str) -> ConversationDetail:
     db = get_db()
     async with db.get_session() as session:
-        conv = await session.get(Conversation, conversation_id)
+        result = await session.execute(
+            select(Conversation)
+            .options(selectinload(Conversation.messages))
+            .where(Conversation.id == conversation_id)
+        )
+        conv = result.scalar_one_or_none()
         if not conv:
             raise HTTPException(status_code=404, detail="Conversation not found")
         return ConversationDetail(
@@ -80,7 +88,10 @@ async def get_conversation(conversation_id: str) -> ConversationDetail:
 async def delete_conversation(conversation_id: str) -> dict:
     db = get_db()
     async with db.get_session() as session:
-        conv = await session.get(Conversation, conversation_id)
+        result = await session.execute(
+            select(Conversation).where(Conversation.id == conversation_id)
+        )
+        conv = result.scalar_one_or_none()
         if not conv:
             raise HTTPException(status_code=404, detail="Conversation not found")
         await session.delete(conv)

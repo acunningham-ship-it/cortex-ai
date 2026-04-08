@@ -149,10 +149,11 @@ async def root() -> dict:
     }
 
 
-# Mount frontend static files if they exist
+# Mount frontend static files
 frontend_dist = Path(__file__).parent.parent / "frontend" / "dist"
 if frontend_dist.exists():
-    app.mount("/app", StaticFiles(directory=frontend_dist, html=True), name="app")
+    # Serve SPA — mount at root so / serves the React app
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
 
 
 if __name__ == "__main__":

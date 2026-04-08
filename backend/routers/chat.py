@@ -79,13 +79,14 @@ async def _get_or_create_conv_id(db, conv_id_input: str | None, model: str, prov
 
 async def _build_messages(db, conv_id: str, new_message: str, system_prompt: str | None) -> list[dict]:
     """Build message history for the conversation."""
+    from sqlalchemy import select
+
     msgs = []
     if system_prompt:
         msgs.append({"role": "system", "content": system_prompt})
 
     # Fetch previous messages
     async with db.get_session() as session:
-        from sqlalchemy import select
         result = await session.execute(
             select(Message)
             .where(Message.conversation_id == conv_id)
