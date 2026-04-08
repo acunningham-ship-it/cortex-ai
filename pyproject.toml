@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "cortex-ai"
@@ -40,8 +40,8 @@ cortex = "cortex_cli.main:app"
 dev = ["pytest>=7.4.0", "pytest-asyncio>=0.23.0", "httpx>=0.26.0"]
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["cortex_cli*", "backend*"]
+where = ["cli", "backend", "."]
+include = ["cortex_cli*"]
 
 [project.urls]
 Homepage = "https://acunningham-ship-it.github.io/cortex-ai"

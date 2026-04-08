@@ -119,7 +119,7 @@ def ask(
                 resp = client.post("/api/chat", json=payload)
                 resp.raise_for_status()
                 data = resp.json()
-                answer = data.get("message", {}).get("content", "No response")
+                answer = data.get("content") or data.get("message", {}).get("content", "No response")
         except httpx.HTTPStatusError as e:
             console.print(f"[red]API Error:[/red] {e.response.text}")
             raise typer.Exit(1)
@@ -171,7 +171,7 @@ def chat(
                         resp = client.post("/api/chat", json=payload)
                         resp.raise_for_status()
                         data = resp.json()
-                        answer = data.get("message", {}).get("content", "No response")
+                        answer = data.get("content") or data.get("message", {}).get("content", "No response")
                         conversation_id = data.get("conversation_id", conversation_id)
                         model_used = data.get("model", "unknown")
                 except Exception as e:
