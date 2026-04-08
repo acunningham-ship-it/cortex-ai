@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  cortex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7337:7337"
+    volumes:
+      - cortex-data:/root/.cortex
+      - ./cortex.yaml:/app/cortex.yaml:ro
+    environment:
+      - CORTEX_OLLAMA_URL=${CORTEX_OLLAMA_URL:-http://host.docker.internal:11434}
+      - CORTEX_CLAUDE_API_KEY=${CORTEX_CLAUDE_API_KEY:-}
+      - CORTEX_OPENAI_API_KEY=${CORTEX_OPENAI_API_KEY:-}
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  cortex-data:

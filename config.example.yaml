@@ -1,0 +1,19 @@
+# Cortex AI Configuration
+# Copy to cortex.yaml and customize
+
+ollama_url: "http://localhost:11434"
+port: 7337
+db_path: "~/.cortex/cortex.db"
+
+# Cloud API keys (optional - Ollama works without these)
+# claude_api_key: "sk-ant-..."
+# openai_api_key: "sk-..."
+
+# Additional cloud models to show in model list
+cloud_models: []
+  # - id: claude-3-haiku-20240307
+  #   name: Claude 3 Haiku
+  #   provider: anthropic
+  # - id: gpt-4o-mini
+  #   name: GPT-4o Mini
+  #   provider: openai

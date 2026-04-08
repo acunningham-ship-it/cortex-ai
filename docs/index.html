@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cortex AI — Your Local-First AI Command Center</title>
+  <meta name="description" content="Multi-model AI platform: chat, pipelines, templates, and CLI — all running locally with Ollama. Zero config, zero cloud dependency." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070711;
+      --bg2: #0d0d1f;
+      --card: #111127;
+      --border: #1e1e3a;
+      --border2: #2a2a4a;
+      --cyan: #00d4ff;
+      --cyan-dim: rgba(0, 212, 255, 0.15);
+      --green: #00ff88;
+      --green-dim: rgba(0, 255, 136, 0.15);
+      --purple: #7c3aed;
+      --purple-dim: rgba(124, 58, 237, 0.15);
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --text-muted: #475569;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(7, 7, 17, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .btn-primary {
+      background: var(--cyan);
+      color: #070711;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-outline {
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-outline:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 120px 48px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--cyan-dim);
+      border: 1px solid rgba(0,212,255,0.3);
+      color: var(--cyan);
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.03em;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary.large { padding: 14px 32px; font-size: 1rem; border-radius: 10px; }
+    .btn-outline.large { padding: 14px 32px; font-size: 1rem; border-radius: 10px; }
+
+    /* ── Terminal Demo ── */
+    .terminal-demo {
+      max-width: 800px;
+      margin: 64px auto 0;
+      background: #0a0a1a;
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .terminal-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #111127;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+    .terminal-title { font-size: 0.8rem; color: var(--text-muted); margin-left: 8px; }
+    .terminal-body {
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .cmd { color: var(--cyan); }
+    .comment { color: var(--text-muted); }
+    .output { color: var(--green); }
+    .output-dim { color: var(--text-dim); }
+    .prompt { color: var(--purple); }
+
+    /* ── Features ── */
+    section { padding: 80px 48px; }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .section-sub {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 48px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .icon-cyan { background: var(--cyan-dim); }
+    .icon-green { background: var(--green-dim); }
+    .icon-purple { background: var(--purple-dim); }
+    .icon-orange { background: rgba(255,150,50,0.15); }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { color: var(--text-dim); font-size: 0.9rem; }
+
+    /* ── Install ── */
+    .install-section { background: var(--bg2); }
+    .install-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .tab {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--text-dim);
+      transition: all 0.2s;
+    }
+    .tab.active { background: var(--cyan-dim); border-color: var(--cyan); color: var(--cyan); }
+    .code-block {
+      background: #0a0a1a;
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.8;
+      position: relative;
+      max-width: 700px;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--border2);
+      border: none;
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: var(--border); color: var(--text); }
+    .step { margin-bottom: 32px; }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--cyan-dim);
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+
+    /* ── How it works ── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .how-card {
+      text-align: center;
+      padding: 32px 24px;
+    }
+    .how-num {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--border2);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .how-card h3 { font-weight: 700; margin-bottom: 8px; }
+    .how-card p { color: var(--text-dim); font-size: 0.9rem; }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(124,58,237,0.05));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cta-section h2 { margin-bottom: 16px; }
+    .cta-section p { color: var(--text-dim); margin-bottom: 32px; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    footer a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+    footer a:hover { color: var(--cyan); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-copy { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* ── Animations ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate { animation: fadeInUp 0.6s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 12px 20px; }
+      .nav-links { display: none; }
+      section { padding: 60px 20px; }
+      .hero { padding: 80px 20px 60px; }
+      footer { padding: 32px 20px; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span>Cortex AI</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#install">Install</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="https://github.com/acunningham-ship-it/cortex-ai" target="_blank">GitHub</a></li>
+    </ul>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="https://github.com/acunningham-ship-it/cortex-ai" class="btn-outline">
+        ★ Star on GitHub
+      </a>
+      <a href="#install" class="btn-primary">Get Started →</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge animate">🚀 Open Source · Local-First · Zero Config</div>
+    <h1 class="animate delay-1">
+      Your AI models.<br/>
+      <span class="gradient-text">Your machine.</span><br/>
+      Your rules.
+    </h1>
+    <p class="animate delay-2">
+      Cortex AI is a platform-level developer tool that unifies local Ollama models
+      with cloud APIs — chat, pipelines, templates, and CLI — all running offline by default.
+    </p>
+    <div class="hero-cta animate delay-3">
+      <a href="#install" class="btn-primary large">Install Free →</a>
+      <a href="https://github.com/acunningham-ship-it/cortex-ai" class="btn-outline large">
+        View on GitHub
+      </a>
+    </div>
+
+    <!-- Terminal demo -->
+    <div class="terminal-demo animate delay-3">
+      <div class="terminal-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <span class="terminal-title">terminal</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="comment"># Install and start in 30 seconds</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">pip install cortex-ai</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">cortex serve</span></div>
+        <br/>
+        <div><span class="output">⚡ Cortex AI starting...</span></div>
+        <div><span class="output-dim">✓ Ollama detected: qwen2.5:7b, gemma4:e4b</span></div>
+        <div><span class="output-dim">✓ Database initialized at ~/.cortex/cortex.db</span></div>
+        <div><span class="output">✓ Ready at http://localhost:7337</span></div>
+        <br/>
+        <div><span class="comment"># Or use the CLI directly</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">cortex ask "Explain async/await in Python"</span></div>
+        <div><span class="output-dim">Async/await is a way to write asynchronous code that...</span></div>
+        <br/>
+        <div><span class="comment"># Pipe any text to an AI model</span></div>
+        <div><span class="prompt">$ </span><span class="cmd">cat main.py | cortex ask "Review this code"</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-label">Features</div>
+      <h2>Everything you need for local AI development</h2>
+      <p class="section-sub">One tool that replaces a dozen — without the cloud dependency or the monthly bill.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon icon-cyan">💬</div>
+          <h3>Multi-Model Chat</h3>
+          <p>Chat with any Ollama model or cloud API from one beautiful interface. Switch models mid-conversation. Full streaming support with markdown rendering.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-purple">⛓️</div>
+          <h3>Pipeline Builder</h3>
+          <p>Chain multiple AI calls together: summarize → translate → critique. Build reusable workflows in YAML or via the visual UI. Run from CLI with a single command.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-green">📋</div>
+          <h3>Prompt Library</h3>
+          <p>Save and reuse prompts with <code>{{variable}}</code> substitution. 6 built-in templates to start: code review, summarize, debug, translate, and more.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-cyan">⚡</div>
+          <h3>Powerful CLI</h3>
+          <p>Quick queries, piped input, pipeline execution, model listing. Works great in shell scripts. Integrates with any UNIX workflow.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-orange">📊</div>
+          <h3>Usage Dashboard</h3>
+          <p>Track token usage, latency, and request history across all models. See how much you're saving vs. cloud API pricing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-green">🔌</div>
+          <h3>Plugin System</h3>
+          <p>Extend with custom Python or JavaScript plugins. Built-in: file reader, web search, calculator. Add your own in minutes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-purple">🔑</div>
+          <h3>Multi-Provider</h3>
+          <p>Ollama (local, zero cost), Claude (Anthropic), and OpenAI — all with the same interface. Config-driven. Add API keys only if you want cloud models.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-cyan">🛡️</div>
+          <h3>Privacy First</h3>
+          <p>All data stays on your machine. SQLite database, no telemetry, no accounts. Your conversations and prompts are yours — always.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon icon-green">🚀</div>
+          <h3>Zero Config Demo</h3>
+          <p>Run <code>cortex serve</code>. Browser opens. Ollama auto-detected. Ready to chat in 30 seconds. No signup, no API keys, no config files needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install" class="install-section">
+    <div style="max-width:800px;margin:0 auto;">
+      <div class="section-label">Installation</div>
+      <h2>Up and running in 60 seconds</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Install Cortex AI</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <div><span class="cmd">pip install cortex-ai</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Make sure Ollama is running (optional but recommended)</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <div><span class="comment"># Install Ollama from ollama.ai, then:</span></div>
+          <div><span class="cmd">ollama pull qwen2.5:7b</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Start Cortex AI</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <div><span class="cmd">cortex serve</span></div>
+          <div><span class="output-dim"># Browser opens automatically at http://localhost:7337</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Optional: Add cloud API keys (cortex.yaml)</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          <div><span class="comment"># cortex.yaml (in your project directory)</span></div>
+          <div>ollama_url: <span class="output">"http://localhost:11434"</span></div>
+          <div>claude_api_key: <span class="output">"sk-ant-..."</span>  <span class="comment"># optional</span></div>
+          <div>openai_api_key: <span class="output">"sk-..."</span>       <span class="comment"># optional</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how">
+    <div style="max-width:1000px;margin:0 auto;text-align:center;">
+      <div class="section-label">How it works</div>
+      <h2>Simple architecture, powerful results</h2>
+      <p class="section-sub" style="margin:0 auto 48px;">Cortex runs a local FastAPI server that proxies requests to Ollama or cloud APIs, stores history in SQLite, and serves a React UI — all in one pip install.</p>
+
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">01</div>
+          <h3>Install & Run</h3>
+          <p>One pip install. Cortex auto-detects Ollama and any configured API keys.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">02</div>
+          <h3>Pick a Model</h3>
+          <p>Choose from local Ollama models or cloud APIs — all in the same dropdown.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">03</div>
+          <h3>Build Workflows</h3>
+          <p>Create pipelines and templates. Run them from the UI, CLI, or REST API.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-num">04</div>
+          <h3>Track & Optimize</h3>
+          <p>Dashboard shows usage, latency, and savings vs. cloud API alternatives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div style="max-width:600px;margin:0 auto;">
+      <h2>Ready to take control of your AI stack?</h2>
+      <p>Open source, self-hosted, privacy-first. No subscriptions, no data leaving your machine.</p>
+      <div class="hero-cta">
+        <a href="https://github.com/acunningham-ship-it/cortex-ai" class="btn-primary large">★ Star on GitHub</a>
+        <a href="#install" class="btn-outline large">Install Now →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span>Cortex AI</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/acunningham-ship-it/cortex-ai">GitHub</a>
+      <a href="https://github.com/acunningham-ship-it/cortex-ai/issues">Issues</a>
+      <a href="https://github.com/acunningham-ship-it/cortex-ai/blob/main/README.md">Docs</a>
+      <a href="https://github.com/acunningham-ship-it/cortex-ai/blob/main/LICENSE">MIT License</a>
+    </div>
+    <div class="footer-copy">© 2026 Cortex AI. Open source under MIT.</div>
+  </footer>
+
+  <script>
+    function copyCode(btn) {
+      const block = btn.closest('.code-block');
+      const text = Array.from(block.querySelectorAll('div'))
+        .map(d => d.textContent)
+        .filter(t => !t.includes('Copy'))
+        .join('\n')
+        .trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
