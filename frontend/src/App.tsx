@@ -5,8 +5,9 @@ import ChatView from './components/Chat/ChatView'
 import PipelineView from './components/Pipeline/PipelineView'
 import TemplatesView from './components/Templates/TemplatesView'
 import DashboardView from './components/Dashboard/DashboardView'
+import ToolsView from './components/Tools/ToolsView'
 
-type View = 'chat' | 'pipelines' | 'templates' | 'dashboard'
+type View = 'chat' | 'pipelines' | 'templates' | 'dashboard' | 'tools'
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('chat')
@@ -27,18 +28,22 @@ export default function App() {
     { id: 'pipelines' as const, label: 'Pipelines', icon: '⚙️' },
     { id: 'templates' as const, label: 'Templates', icon: '📋' },
     { id: 'dashboard' as const, label: 'Dashboard', icon: '📊' },
+    { id: 'tools' as const, label: 'AI Tools', icon: '🔧' },
   ]
 
   return (
     <div className="flex h-screen bg-cortex-bg text-white">
       {/* Sidebar */}
-      <aside className="w-60 bg-cortex-card border-r border-cortex-border flex flex-col">
+      <aside className="w-60 bg-gradient-to-b from-cortex-card to-cortex-bg border-r border-cortex-border flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b border-cortex-border">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-cortex-cyan to-cortex-purple bg-clip-text text-transparent">
             Cortex AI
           </h1>
           <p className="text-xs text-gray-400 mt-1">Local AI Developer</p>
+          <div className="mt-2 inline-block px-2 py-1 rounded bg-cortex-purple bg-opacity-20 border border-cortex-purple border-opacity-30">
+            <p className="text-xs text-cortex-purple font-semibold">v0.2.0</p>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -48,10 +53,10 @@ export default function App() {
               <button
                 key={item.id}
                 onClick={() => setCurrentView(item.id)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                className={`w-full text-left px-4 py-3 rounded-lg transition-all border-l-4 ${
                   currentView === item.id
-                    ? 'bg-cortex-cyan bg-opacity-10 text-cortex-cyan border border-cortex-cyan'
-                    : 'text-gray-300 hover:bg-cortex-border hover:bg-opacity-50'
+                    ? 'bg-cortex-cyan bg-opacity-10 text-cortex-cyan border-l-cortex-cyan border border-cortex-cyan'
+                    : 'text-gray-300 hover:bg-cortex-border hover:bg-opacity-50 border-l-transparent hover:border-l-cortex-cyan'
                 }`}
               >
                 <span className="mr-2">{item.icon}</span>
@@ -73,40 +78,41 @@ export default function App() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="h-16 bg-cortex-card border-b border-cortex-border flex items-center justify-between px-8">
-          <h2 className="text-lg font-semibold">
-            {navItems.find(n => n.id === currentView)?.label}
-          </h2>
+        <header className="h-20 bg-gradient-to-r from-cortex-card to-cortex-border border-b border-cortex-border flex items-center justify-between px-8">
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-wide">Navigation</p>
+            <h2 className="text-xl font-semibold">
+              {navItems.find(n => n.id === currentView)?.label}
+            </h2>
+          </div>
 
           {/* Model Selector */}
           {currentView === 'chat' && models.length > 0 && (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-gray-400">Model:</label>
-                <select
-                  value={selectedModel}
-                  onChange={(e) => {
-                    const model = models.find(m => m.name === e.target.value)
-                    if (model) {
-                      setSelectedModel(model.name)
-                      setSelectedProvider(model.provider)
-                    }
-                  }}
-                  className="bg-cortex-border border border-cortex-border rounded px-3 py-2 text-sm focus:outline-none focus:border-cortex-cyan focus:ring-1 focus:ring-cortex-cyan"
-                >
-                  {models.map(model => (
-                    <option key={`${model.provider}/${model.name}`} value={model.name}>
-                      {model.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div className="flex items-center gap-4 bg-cortex-card px-4 py-2 rounded-lg border border-cortex-border">
+              <label className="text-xs text-gray-400 font-semibold uppercase tracking-wide">Active Model:</label>
+              <select
+                value={selectedModel}
+                onChange={(e) => {
+                  const model = models.find(m => m.name === e.target.value)
+                  if (model) {
+                    setSelectedModel(model.name)
+                    setSelectedProvider(model.provider)
+                  }
+                }}
+                className="bg-cortex-border border border-cortex-cyan rounded px-3 py-2 text-sm font-medium focus:outline-none focus:ring-1 focus:ring-cortex-cyan cursor-pointer"
+              >
+                {models.map(model => (
+                  <option key={`${model.provider}/${model.name}`} value={model.name}>
+                    {model.name}
+                  </option>
+                ))}
+              </select>
             </div>
           )}
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden transition-opacity duration-300">
           {currentView === 'chat' && (
             <ChatView
               selectedModel={selectedModel}
@@ -116,6 +122,7 @@ export default function App() {
           {currentView === 'pipelines' && <PipelineView />}
           {currentView === 'templates' && <TemplatesView />}
           {currentView === 'dashboard' && <DashboardView />}
+          {currentView === 'tools' && <ToolsView />}
         </div>
       </main>
 

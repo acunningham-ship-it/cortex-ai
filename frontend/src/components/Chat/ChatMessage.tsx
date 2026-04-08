@@ -5,15 +5,17 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface ChatMessageProps {
   message: Message
+  timestamp?: Date
 }
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({ message, timestamp }: ChatMessageProps) {
   const isUser = message.role === 'user'
+  const time = timestamp ? timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ''
 
   return (
     <div className={`flex gap-4 mb-6 animate-fade-in ${isUser ? 'justify-end' : ''}`}>
       {!isUser && (
-        <div className="w-8 h-8 rounded-full bg-cortex-purple flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cortex-purple to-cortex-cyan flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1">
           AI
         </div>
       )}
@@ -21,8 +23,8 @@ export default function ChatMessage({ message }: ChatMessageProps) {
       <div
         className={`max-w-2xl ${
           isUser
-            ? 'bg-cortex-cyan text-black rounded-lg'
-            : 'bg-cortex-card border border-cortex-border rounded-lg'
+            ? 'bg-cortex-cyan bg-opacity-90 text-black rounded-2xl rounded-tr-none shadow-lg'
+            : 'bg-cortex-card border border-cortex-border rounded-2xl rounded-tl-none'
         } p-4`}
       >
         {isUser ? (
@@ -106,15 +108,22 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           </div>
         )}
 
-        {message.model && (
-          <p className="text-xs text-gray-500 mt-2 opacity-70">
-            {message.provider}/{message.model}
-          </p>
-        )}
+        <div className="flex items-center justify-between mt-2 gap-2">
+          {message.model && (
+            <p className="text-xs text-gray-500 opacity-70">
+              {message.provider}/{message.model}
+            </p>
+          )}
+          {time && (
+            <p className={`text-xs ${isUser ? 'text-black opacity-60' : 'text-gray-500 opacity-70'}`}>
+              {time}
+            </p>
+          )}
+        </div>
       </div>
 
       {isUser && (
-        <div className="w-8 h-8 rounded-full bg-cortex-green flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cortex-green to-cortex-cyan flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1">
           YOU
         </div>
       )}

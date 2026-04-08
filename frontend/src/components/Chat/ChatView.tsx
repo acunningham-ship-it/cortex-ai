@@ -8,10 +8,14 @@ interface ChatViewProps {
   selectedProvider: string
 }
 
+interface MessageWithTimestamp extends Message {
+  timestamp?: Date
+}
+
 export default function ChatView({ selectedModel, selectedProvider }: ChatViewProps) {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<MessageWithTimestamp[]>([])
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [conversationsLoading, setConversationsLoading] = useState(true)
@@ -102,11 +106,12 @@ export default function ChatView({ selectedModel, selectedProvider }: ChatViewPr
       }
 
       // Add user message
-      const userMessage: Message = {
+      const userMessage: MessageWithTimestamp = {
         role: 'user',
         content: messageText,
         model: selectedModel,
-        provider: selectedProvider
+        provider: selectedProvider,
+        timestamp: new Date()
       }
       const updatedMessages = [...messages, userMessage]
       setMessages(updatedMessages)
@@ -152,7 +157,8 @@ export default function ChatView({ selectedModel, selectedProvider }: ChatViewPr
               role: 'assistant',
               content: assistantContent,
               model: selectedModel,
-              provider: selectedProvider
+              provider: selectedProvider,
+              timestamp: new Date()
             }
           ]
         }
@@ -222,7 +228,7 @@ export default function ChatView({ selectedModel, selectedProvider }: ChatViewPr
                       setInputValue(prompt)
                       handleNewChat()
                     }}
-                    className="text-left p-4 rounded-lg bg-cortex-card border border-cortex-border hover:border-cortex-cyan hover:bg-cortex-border transition-all"
+                    className="text-left p-4 rounded-xl bg-cortex-card border border-cortex-border hover:border-cortex-cyan hover:bg-cortex-border hover:shadow-lg hover:shadow-cortex-cyan/20 transition-all"
                   >
                     <p className="text-sm text-gray-300">{prompt}</p>
                   </button>
@@ -232,7 +238,7 @@ export default function ChatView({ selectedModel, selectedProvider }: ChatViewPr
           ) : (
             <>
               {messages.map((msg, i) => (
-                <ChatMessage key={i} message={msg} />
+                <ChatMessage key={i} message={msg} timestamp={msg.timestamp} />
               ))}
               {isLoading && (
                 <div className="flex gap-3 mb-6 animate-fade-in">
@@ -274,14 +280,14 @@ export default function ChatView({ selectedModel, selectedProvider }: ChatViewPr
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Type a message... (Shift+Enter for newline)"
-                className="flex-1 bg-cortex-card border border-cortex-border rounded-lg p-3 text-sm focus:outline-none focus:border-cortex-cyan focus:ring-1 focus:ring-cortex-cyan resize-none max-h-48"
+                className="flex-1 bg-cortex-card border border-cortex-border rounded-xl p-3 text-sm focus:outline-none focus:border-cortex-cyan focus:ring-1 focus:ring-cortex-cyan resize-none max-h-48 transition-all"
                 rows={1}
                 disabled={isLoading || !currentConversation && !conversationsLoading}
               />
               <button
                 onClick={handleSendMessage}
                 disabled={isLoading || !inputValue.trim() || (!currentConversation && conversationsLoading)}
-                className="px-6 py-3 bg-cortex-cyan text-black rounded-lg font-medium hover:bg-cortex-cyan hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-6 py-3 bg-cortex-cyan text-black rounded-xl font-semibold hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-cortex-cyan/20 hover:shadow-cortex-cyan/40"
               >
                 {isLoading ? 'Sending...' : 'Send'}
               </button>
