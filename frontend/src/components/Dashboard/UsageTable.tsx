@@ -4,7 +4,7 @@ export default function UsageTable() {
     {
       id: '1',
       timestamp: new Date(Date.now() - 5 * 60000),
-      model: 'llama2',
+      model: 'qwen2.5:7b',
       provider: 'ollama',
       inputTokens: 245,
       outputTokens: 187,
@@ -13,7 +13,7 @@ export default function UsageTable() {
     {
       id: '2',
       timestamp: new Date(Date.now() - 12 * 60000),
-      model: 'mistral',
+      model: 'gemma4:e4b',
       provider: 'ollama',
       inputTokens: 512,
       outputTokens: 324,
@@ -22,8 +22,8 @@ export default function UsageTable() {
     {
       id: '3',
       timestamp: new Date(Date.now() - 28 * 60000),
-      model: 'neural-chat',
-      provider: 'ollama',
+      model: 'claude-sonnet-4-6',
+      provider: 'anthropic',
       inputTokens: 189,
       outputTokens: 142,
       latency: '1.8s'
@@ -31,7 +31,7 @@ export default function UsageTable() {
     {
       id: '4',
       timestamp: new Date(Date.now() - 45 * 60000),
-      model: 'llama2',
+      model: 'qwen2.5:0.5b',
       provider: 'ollama',
       inputTokens: 334,
       outputTokens: 256,
@@ -40,8 +40,8 @@ export default function UsageTable() {
     {
       id: '5',
       timestamp: new Date(Date.now() - 62 * 60000),
-      model: 'mistral',
-      provider: 'ollama',
+      model: 'gpt-4.1',
+      provider: 'openai',
       inputTokens: 423,
       outputTokens: 318,
       latency: '3.8s'

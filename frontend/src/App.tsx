@@ -11,7 +11,7 @@ type View = 'chat' | 'pipelines' | 'templates' | 'dashboard' | 'tools'
 
 export default function App() {
   const [currentView, setCurrentView] = useState<View>('chat')
-  const [selectedModel, setSelectedModel] = useState('llama2')
+  const [selectedModel, setSelectedModel] = useState('qwen2.5:7b')
   const [selectedProvider, setSelectedProvider] = useState('ollama')
   const { models } = useModels()
   const { isHealthy } = useHealth()
